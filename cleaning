@@ -1,0 +1,20 @@
+!pip install rapidfuzz
+!pip install pandas
+
+import pandas as pd
+from rapidfuzz import fuzz, process
+
+address_list = pd.read_csv('~/Downloads/SLM_Goldbelly_SharedMail_August_Nationals_Holdout.csv').address_1
+slm_address_list = pd.DataFrame(address_list)
+
+def normalize_address(addresses):
+    # Normalize by lowering case, stripping spaces, removing punctuations, and handling common abbreviations
+    # normalized = address.lower().strip()
+    normalized = addresses.replace('.', '').replace(',', ''). replace('#', 'APT').replace('UNIT', 'APT').replace('STE', 'APT')
+    clean1 = normalized.replace('street', 'st').replace('avenue', 'ave').replace('road', 'rd')
+    clean2 = clean1.replace(' ','')
+    # return ' '.join(normalized)  # remove extra spaces
+    return clean2.lower()
+
+slm_address_list["address_1"].astype(str).apply(normalize_address)
+
